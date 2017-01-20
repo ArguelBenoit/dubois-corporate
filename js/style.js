@@ -1,29 +1,14 @@
 
-function allSizeCss() {
+function cssSize() {
   ['#homepage', '#info', '#map', 'iframe'].forEach(function(element){
     $(element).css('min-height',  window.innerHeight + 'px');
   });
-
   ['#homepage', '#info'].forEach(function(element){
     $(element + ' .container').css('padding-top', ( window.innerHeight - $(element + ' .container').height() ) / 2 + 'px');
-    // if ($(element).height() > window.innerHeight) {
-    //   $(element).css('padding-top',  '70px');
-    //   $(element).css('padding-bottom',  '70px');
-    // }
-  });
-
-  $('.container2arrow').css('left', ( ( window.innerWidth / 2 ) - 20 ) + 'px');
-  ['#container2arrow1', '#container2arrow2', '#container2arrow3'].forEach(function(element, i){
-    if (i+1 == 1)
-      $(element).css('top', ( $('#homepage').height() - 64 ) + 'px');
-    if (i+1 == 2)
-      $(element).css('top', ( $('#homepage').height() + $('#info').height() - 64 ) + 'px');
-    if (i+1 == 3)
-      $(element).css('top', ( $('#homepage').height() + $('#info').height() + $('#map').height() - 64 ) + 'px');
   });
 }
 
-function scrollHomepage() {
+function opacityHomepage() {
   $(window).scroll(function(){
     $('#homepage').css('opacity', 1 - $(window).scrollTop() / 250);
   });
@@ -38,12 +23,35 @@ function smouthScroll() {
   });
 }
 
-$(document).ready(function() {
-  smouthScroll();
-  scrollHomepage();
-  allSizeCss();
-});
+function changeTargetAtScroll() {
+  var scroll = $(window).scrollTop(),
+      homepage = $('#homepage').height(),
+      info = $('#info').height(),
+      map = $('#map').height(),
+      footer = $('#footer').height();
+  if (scroll == 0){
+    $('.container-arrow-top i').css('display', 'none');
+    $('.container-arrow-bottom i').attr('href', '#info');
+  } else if (scroll > 0 && scroll < homepage ) { // scroll sur homepage
+    $('.container-arrow-top i').css('display', 'inherit');
+    $('.container-arrow-bottom i').attr('href', '#info');
+  } else if(scroll >= homepage && scroll < homepage + info) { // scroll sur info
+    $('.container-arrow-bottom i').attr('href', '#map');
+  } else if(scroll >= homepage + info && scroll <= homepage + info + 200) { //scroll sur map
+    $('.container-arrow-bottom i').attr('href', '#footer');
+  }
+}
 
+
+$(document).ready(function() {
+  cssSize();
+  smouthScroll();
+  opacityHomepage();
+  changeTargetAtScroll();
+});
 window.onresize = function(event) {
-  allSizeCss();
+  cssSize();
 };
+$(window).scroll(function(){
+  changeTargetAtScroll();
+});
